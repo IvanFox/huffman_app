@@ -1,36 +1,24 @@
 package me.ivanlis.huffmancodes.model
 
-import java.io.File
 import java.util.*
 
 /**
  * Created by ivan on 17/04/16.
  * Project: Huffman.codes
  */
-class HuffmanLogicImpl(var plainText: String) : HuffmanLogic {
+class HuffmanEncoderImpl(var plainText: String) : HuffmanEncoder {
 
-
-    override fun getEncodedText() : String {
-        var charOccurrence = countCharOccurrence(plainText)
-        var root = createBinHuffmanTree(convertOccurrencesIntoNodes(charOccurrence))
-        var huffmanCodes : HashMap<Char, String> = HashMap()
-        huffmanCodes = generateHuffmanScheme(root, "", huffmanCodes)
+    override fun getEncodedText(): String {
+        var huffmanCodes = getHuffmanCodes()
         return generateEncodedOutput(plainText, huffmanCodes)
     }
 
-    override fun getDecodedText(encodedText : String, huffmanCodes: HashMap<Char, String>): String {
-        val inverseHuffmanCodes = createInverseHuffmanCodes(huffmanCodes)
-        var code = ""
-        var decodedText = ""
-
-        for (char in encodedText) {
-            code += char
-            if(inverseHuffmanCodes.containsKey(code)) {
-                decodedText += inverseHuffmanCodes[code]
-                code = ""
-            }
-        }
-        return decodedText
+    override fun getHuffmanCodes(): HashMap<Char, String> {
+        var charOccurrence = countCharOccurrence(plainText)
+        var root = createBinHuffmanTree(convertOccurrencesIntoNodes(charOccurrence))
+        var huffmanCodes: HashMap<Char, String> = HashMap()
+        huffmanCodes = generateHuffmanScheme(root, "", huffmanCodes)
+        return huffmanCodes
     }
 
 
@@ -82,14 +70,6 @@ class HuffmanLogicImpl(var plainText: String) : HuffmanLogic {
 
     }
 
-    private fun createInverseHuffmanCodes(huffmanCodes: HashMap<Char, String>) : HashMap<String, Char> {
-        var inverseHuffmanCodes : HashMap<String, Char> = HashMap()
-        huffmanCodes.forEach { inverseHuffmanCodes.put(it.value, it.key) }
-        return inverseHuffmanCodes
-    }
-
-
-
     class Node(val leftNode: Node? = null,
                val rightNode: Node? = null,
                val char: Char? = null,
@@ -107,7 +87,4 @@ class HuffmanLogicImpl(var plainText: String) : HuffmanLogic {
 
         fun isLeaf(): Boolean = leftNode == null && rightNode == null
     }
-
-
 }
-
